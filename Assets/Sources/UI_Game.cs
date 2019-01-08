@@ -4,17 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class UI_Game : MonoBehaviour
 {
-    private const float cTime = 30f;
-
-    private static readonly string[] _words = new []
-    {
-        "Elephant",
-        "Tiger",
-        "Monkey",
-        "Bear",
-        "Rabbit"
-    };
-
     [SerializeField]
     private TextMeshProUGUI _timerLabel;
     [SerializeField]
@@ -22,57 +11,42 @@ public class UI_Game : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _wordLabel;
 
-    private int _wordsGuessed;
-    private float _timeLast;
-    private bool _finished;
+    [SerializeField]
+    private GameManager _gameManager;
+
+    [SerializeField]
+    private GameObject _resultsView;
+
+    [SerializeField]
+    private TextMeshProUGUI _resultsLabel;
 
     void Awake()
     {
-        _timeLast = cTime;
-        _finished = false;
-        _wordsGuessedLabel.text = "0";
-        ChangeWord();
+        _gameManager.OnTimeFinished += HandleTimeFinished;
+    }
+
+    void OnDestroy()
+    {
+        if (_gameManager != null)
+        {
+            _gameManager.OnTimeFinished -= HandleTimeFinished;
+        }
+    }
+
+    private void HandleTimeFinished()
+    {
+        _resultsLabel.text = _gameManager.WordsGuessed.ToString();
+        _resultsView.SetActive(true);
     }
 
     void Update()
     {
-        if (!_finished)
-        {
-            _timeLast -= Time.deltaTime;
-            var timeLast = Mathf.RoundToInt( _timeLast );
-            _timerLabel.text = timeLast.ToString();
+        var timeLast = Mathf.RoundToInt(_gameManager.TimeLast);
 
-            if (Input.GetKeyUp(KeyCode.W))
-            {
-                WordGuessed();
-            }
-            else if (Input.GetKeyUp(KeyCode.S))
-            {
-                WordDiclined();
-            }
+        _timerLabel.text = timeLast.ToString();
 
-            if (timeLast == 0)
-            {
-                _finished = true;
-            }
-        }
-    }
-
-    private void WordGuessed()
-    {
-        _wordsGuessed += 1;
-        _wordsGuessedLabel.text = _wordsGuessed.ToString();
-        ChangeWord();
-    }
-
-    private void WordDiclined()
-    {
-        ChangeWord();
-    }
-
-    private void ChangeWord()
-    {
-        _wordLabel.text = _words[Random.Range( 0, _words.Length )];
+        _wordsGuessedLabel.text = _gameManager.WordsGuessed.ToString();
+        _wordLabel.text = _gameManager.CurrentWord;
     }
 
     public void OnMainMenuButtonClicked()
