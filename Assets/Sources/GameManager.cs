@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,20 +11,15 @@ public class GameManager : MonoBehaviour
 {
     private const float cTime = 30f;
 
-    private static readonly string[] _words = new[]
-    {
-        "Elephant",
-        "Tiger",
-        "Monkey",
-        "Bear",
-        "Rabbit"
-    };
+    
 
     public event Action OnTimeFinished;
 
     public int WordsGuessed { get; private set; }
     public float TimeLast { get; private set; }
     public string CurrentWord { get; private set; }
+
+    private List<string> _availableWords = new List<string>();
 
     private bool _finished;
 
@@ -67,7 +63,23 @@ public class GameManager : MonoBehaviour
 
     private void ChangeWord()
     {
-        CurrentWord = _words[Random.Range(0, _words.Length)];
+        CurrentWord = GetNewWord();
+    }
+
+    private string GetNewWord()
+    {
+        if (_availableWords.Count == 0)
+        {
+            _availableWords = WordsProvider.Instance.Words.ToList();
+        }
+
+        var randomIndex = Random.Range(0, _availableWords.Count);
+
+        var word = _availableWords[randomIndex];
+
+        _availableWords.RemoveAt(randomIndex);
+
+        return word;
     }
 
     public void OnMainMenuButtonClicked()
