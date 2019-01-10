@@ -13,4 +13,9 @@ public class UI_MainMenu : MonoBehaviour
     {
         SceneManager.LoadScene( "Game" );
     }
+
+    public void OnSettingsClicked()
+    {
+        SceneManager.LoadScene("Settings");
+    }
 }

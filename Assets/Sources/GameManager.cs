@@ -9,10 +9,6 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
-    private const float cTime = 30f;
-
-    
-
     public event Action OnTimeFinished;
 
     public int WordsGuessed { get; private set; }
@@ -25,7 +21,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        TimeLast = cTime;
+        TimeLast = PlayerPrefs.GetInt("Timer", Settings.cDefaultTime);
         _finished = false;
 
         ChangeWord();
