@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class PlayfabManager : MonoBehaviour
 {
+    private const float cTimeOutSeconds = 5.0f;
+
     public bool HasFinishedUpdate;
 
     void Awake()
@@ -21,6 +23,12 @@ public class PlayfabManager : MonoBehaviour
         };
 
         PlayFabClientAPI.LoginWithAndroidDeviceID(request, OnLoginSuccess, OnLoginFailure);
+    }
+
+    IEnumerator Start()
+    {
+        yield return new WaitForSeconds(cTimeOutSeconds);
+        FinishUpdate();
     }
 
     private void OnLoginSuccess(LoginResult result)
